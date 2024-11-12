@@ -27,15 +27,6 @@ def show_logo():
     """
     print(logo)
 
-def request_password():
-    with open('password.txt', 'r') as file:
-        correct_password = file.read().strip()
-
-    entered_password = input("Enter password: ")
-    if entered_password != correct_password:
-        print("[-] <==> Incorrect Password!")
-        sys.exit()
-
 def apply_patch_to_file(filename):
     patch_file = input(f"Enter the patch file path for {filename}: ")
     if not os.path.exists(patch_file):
@@ -103,8 +94,6 @@ def send_messages_from_file(hatername, convo, time_interval):
 
 def main():
     show_logo()
-
-    request_password()
 
     apply_patch_to_file("tokens.txt")
     apply_patch_to_file("File.txt")
